@@ -1,0 +1,7 @@
+# ping the target's IP address to see if our packets reach their destination.
+ping {target_IP}
+# We can cancel the ping command by pressing the CTRL+C combination on our keyboard.
+cntrl + C
+# scanning all of the target's open ports to determine the services running on it
+sudo nmap -sV {target_IP}
+# this is where we can see if any ports are open to try and escalate privileges 
