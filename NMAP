@@ -3,6 +3,7 @@ ping {target_IP}
 # We can cancel the ping command by pressing the CTRL+C combination on our keyboard.
 cntrl + C
 # scanning all of the target's open ports to determine the services running on it
+# -sV : Probe open ports to determine service/version info
 sudo nmap -sV {target_IP} 
 # you can also try..
 sudo nmap -p- -sV {target_IP}
