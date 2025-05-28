@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Ensure script is run as root
+if [ "$(id -u)" -ne 0 ]; then
+  echo "Run this script as root or with sudo."
+  exit 1
+fi
+
+# Prompt for username
+read -p "Enter new username: " USERNAME
+
+# Prompt for full name
+read -p "Enter full name (optional): " FULLNAME
+
+# Create user with home directory and bash shell
+useradd -m -s /bin/bash "$USERNAME"
+
+# Set password
+echo "Set password for $USERNAME:"
+passwd "$USERNAME"
+
+# Optional: Add full name to comment field
+if [ ! -z "$FULLNAME" ]; then
+  chfn -f "$FULLNAME" "$USERNAME"
+fi
+
+# Ask to add to sudo group
+read -p "Add $USERNAME to sudo group? (y/n): " ADD_SUDO
+if [[ "$ADD_SUDO" =~ ^[Yy]$ ]]; then
+  usermod -aG sudo "$USERNAME"
+  echo "$USERNAME added to sudo group."
+fi
+
+# Ask to configure SSH
+read -p "Configure SSH access (with public key)? (y/n): " SET_SSH
+if [[ "$SET_SSH" =~ ^[Yy]$ ]]; then
+  read -p "Paste the user's public SSH key: " SSH_KEY
+
+  # Setup .ssh directory and authorized_keys
+  su - "$USERNAME" -c "mkdir -p ~/.ssh && chmod 700 ~/.ssh"
+  echo "$SSH_KEY" | su - "$USERNAME" -c "cat > ~/.ssh/authorized_keys"
+  su - "$USERNAME" -c "chmod 600 ~/.ssh/authorized_keys"
+
+  echo "SSH key added for $USERNAME."
+fi
+
+echo "User $USERNAME created successfully."
+
+# Add to PATH for global use
+# sudo mv create_user.sh /usr/local/bin/create_user
