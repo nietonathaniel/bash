@@ -15,6 +15,10 @@ read -p "Enter full name (optional): " FULLNAME
 # Create user with home directory and bash shell
 useradd -m -s /bin/bash "$USERNAME"
 
+# Disable account until ready
+usermod --expiredate 1 "$USERNAME"
+echo "Account for $USERNAME has been temporarily disabled."
+
 # Set password
 echo "Set password for $USERNAME:"
 passwd "$USERNAME"
